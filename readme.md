@@ -1,5 +1,7 @@
 # instrument-recognition
 Author: David Choi
+
 SV STEM Fair 2019
-This project analyzes audio to recognize the musical instrument
-playing in the audio.
+
+This project uses machine learning to analyze audio and recognize
+the musical instrument playing in the audio.
