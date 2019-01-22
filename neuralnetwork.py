@@ -41,7 +41,7 @@ class NeuralNetwork:
                     label for its corresponding data example """
         self.labels = labels
 
-    def costFunction(self, reg):
+    def cost_function(self, reg):
         """ Calculates the weight gradients and returns the regularized cost
             of the neural network based on the current data set and weights.
             reg: regularization factor """
@@ -99,7 +99,7 @@ class NeuralNetwork:
             alpha: the learning rate for gradient descent
             reg: regularization factor """
         for i in range(iterations):
-            print(self.costFunction(reg))
+            print(self.cost_function(reg))
             for matrix in range(len(self.weights)):
                 self.weights[matrix] -= alpha * self.gradients[matrix]
 
@@ -108,6 +108,32 @@ class NeuralNetwork:
         """ Computes the sigmoid activation function
             x: input to the activation function """
         return 1 / (1 + np.exp(-x))
+
+    def accuracy(self):
+        """ Prints out the accuracy of the neural network:
+        # examples correctly identified / # total examples """
+        correct = 0
+        m = len(self.data) # amount of data examples
+        X = np.hstack((np.ones((m, 1)), self.data)) # add bias units to data
+
+        # process each data example
+        for i in range(m):
+            # perform forward propagation / compute activations
+            a = [] # list of activations columns
+            a.append(X[i, :][None].T) # first activation column is the input
+            # compute activation columns of hidden layers
+            for layer in range(1, len(self.layer_lengths) - 1):
+                column = np.vstack((1, self.sigmoid(self.weights[layer - 1] @\
+                         a[layer - 1])))
+                a.append(column)
+            # compute last activation column / hypothesis
+            h = self.sigmoid(self.weights[-1] @ a[-1])
+            if np.argmax(h) == self.labels[i]:
+                correct += 1
+            else:
+                print(np.argmax(h), self.labels[i])
+
+        return correct / m
 
     def numericalGrad(self, reg):
         """ Test function to check gradients. """
@@ -118,9 +144,9 @@ class NeuralNetwork:
         for i in range(len(self.weights)):
             for (x,y), value in np.ndenumerate(self.weights[i]):
                  self.weights[i][x][y] -= e
-                 loss1 = self.costFunction(reg)
+                 loss1 = self.cost_function(reg)
                  self.weights[i][x][y] += 2*e
-                 loss2 = self.costFunction(reg)
+                 loss2 = self.cost_function(reg)
                  numgrad[i][x][y] = (loss2 - loss1) / (2*e)
                  self.weights[i][x][y] -= e
         return numgrad
