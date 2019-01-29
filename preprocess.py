@@ -5,7 +5,7 @@ from pydub import AudioSegment
 import matplotlib.pyplot as plt
 
 def create_data():
-    plot = bool(input("Show FFT visualizations of data? (True/False) "))
+    plot = "Y" == input("Show FFT visualizations of data? (Y/N) ")
     directory_num = int(input("How many directories to process? "))
     data_list = []
     for x in range(directory_num):
@@ -46,10 +46,10 @@ def preprocess(directory_path, label, plot):
     data_list = []
 
     # set top frequency in frequency range
-    freq_top = 8000
+    freq_top = 4000
 
     # set the number of bins / partitions
-    bins = 200
+    bins = 50
 
     # process each audio file
     for file_path in file_paths:
@@ -95,3 +95,33 @@ def preprocess(directory_path, label, plot):
             plt.show()
 
     return data_list
+
+def test_audio(file_path):
+    # set top frequency in frequency range
+    freq_top = 4000
+
+    # set the number of bins / partitions
+    bins = 50
+
+    # extract audio / related information
+    audio = AudioSegment.from_mp3(file_path)
+    sample_rate = audio.frame_rate
+    raw_data = audio.raw_data
+    y = np.fromstring(raw_data, dtype=np.int16)
+    samples = len(y)
+
+    # determine partitions in frequency range
+    freq_res = sample_rate / samples
+    x = int(np.ceil(freq_top * samples / sample_rate))
+    x = x - (x % bins)
+
+    # isolate desired frequency range
+    y = np.abs(np.fft.fft(y)[:x])
+
+    # take average over each bin / partition
+    a = np.arange(y.size) // (x // bins)
+    y = np.bincount(a, y) / np.bincount(a)
+
+    # normalize amplitudes to range [0, 1]
+    y = y / max(y)
+    return ' '.join(str(i) for i in y)

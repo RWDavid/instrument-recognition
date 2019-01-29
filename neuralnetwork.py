@@ -93,15 +93,27 @@ class NeuralNetwork:
 
         return np.sum(cost)
 
-    def train(self, iterations, alpha, reg):
+    def train(self, iterations, alpha, reg, test_data, test_labels):
         """ Performs gradient descent.
             iterations: the number of times to perform gradient descent
             alpha: the learning rate for gradient descent
             reg: regularization factor """
+        train_plot = []
+        test_plot = []
         for i in range(iterations):
-            print(self.cost_function(reg))
+            temp_data = self.data
+            temp_labels = self.labels
+            self.set_data(test_data)
+            self.set_labels(test_labels)
+            test_plot.append(self.cost_function(0))
+            self.set_data(temp_data)
+            self.set_labels(temp_labels)
+            train_plot.append(self.cost_function(0))
+            #print(self.cost_function(reg))
+            self.cost_function(reg)
             for matrix in range(len(self.weights)):
                 self.weights[matrix] -= alpha * self.gradients[matrix]
+        return (train_plot, test_plot)
 
     @staticmethod
     def sigmoid(x):
@@ -130,10 +142,27 @@ class NeuralNetwork:
             h = self.sigmoid(self.weights[-1] @ a[-1])
             if np.argmax(h) == self.labels[i]:
                 correct += 1
-            else:
-                print(np.argmax(h), self.labels[i])
+            #else:
+                #print(np.argmax(h), self.labels[i])
 
         return correct / m
+
+    def predict(self):
+        """ Prints out the accuracy of the neural network:
+        # examples correctly identified / # total examples """
+        X = np.hstack((np.ones((1, 1)), self.data)) # add bias units to data
+
+        # perform forward propagation / compute activations
+        a = [] # list of activations columns
+        a.append(X[0, :][None].T) # first activation column is the input
+        # compute activation columns of hidden layers
+        for layer in range(1, len(self.layer_lengths) - 1):
+            column = np.vstack((1, self.sigmoid(self.weights[layer - 1] @\
+                     a[layer - 1])))
+            a.append(column)
+        # compute last activation column / hypothesis
+        h = self.sigmoid(self.weights[-1] @ a[-1])
+        return np.argmax(h)
 
     def numericalGrad(self, reg):
         """ Test function to check gradients. """
