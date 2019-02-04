@@ -1,5 +1,0 @@
-clarinet: 0
-flute: 1
-trombone: 2
-trumpet: 3
-violin: 4

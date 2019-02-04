@@ -111,7 +111,6 @@ def test_audio(file_path):
     samples = len(y)
 
     # determine partitions in frequency range
-    freq_res = sample_rate / samples
     x = int(np.ceil(freq_top * samples / sample_rate))
     x = x - (x % bins)
 

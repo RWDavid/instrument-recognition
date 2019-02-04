@@ -13,10 +13,11 @@ sample_rate = audio.frame_rate
 samples = audio.get_array_of_samples()
 l_samples = samples[::2]
 r_samples = samples[1::2]
+fft_size = 16384
 
 # set up plot
 fig, ax = plt.subplots()
-data = np.arange(512)
+data = np.arange(fft_size // 16)
 data[0] = 8000;
 line, = ax.plot(data)
 plt.pause(0.001)
@@ -32,13 +33,13 @@ while True:
     current = int(tnow * sample_rate)
 
     # break if there are not enough samples (end of song)
-    if current + 8192 >= len(l_samples):
+    if current + fft_size >= len(l_samples):
         break
 
     # perform fft
-    data = abs(fft(l_samples[current:current + 8192])) / 8192 +\
-           abs(fft(r_samples[current:current + 8192])) / 8192
-    data = np.array(data[:512])
+    data = abs(fft(l_samples[current:current + fft_size])) / fft_size +\
+           abs(fft(r_samples[current:current + fft_size])) / fft_size
+    data = np.array(data[:fft_size // 16])
 
     # plot amplitudes
     line.set_ydata(data)

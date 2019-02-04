@@ -21,7 +21,7 @@ def main():
     pass
 
 def train_and_plot(nn, iterations, alpha, reg, test_data, test_labels):
-    (train_plot, test_plot) = nn.train(iterations, alpha, reg, test_data, test_labels)
+    (train_plot, test_plot) = nn.train_with_plot(iterations, alpha, reg, test_data, test_labels)
     min_epoch = np.argmin(test_plot) + 1
     print("Test cost minimized at epoch " + str(min_epoch))
     epochs = np.arange(len(train_plot))
@@ -65,8 +65,8 @@ validation_labels = np.array(validation_labels).reshape(len(validation_labels), 
 test_data = np.array(test_data)
 test_labels = np.array(test_labels).reshape(len(test_labels), 1)
 
-# create neural network with 100 inputs, 30 hidden units, and 5 classes
-nn = NeuralNetwork([50, 30, 5])
+# create neural network with 50 inputs, 30 hidden units, and 3 classes
+nn = NeuralNetwork([50, 30, 3])
 nn.set_data(train_data)
 nn.set_labels(train_labels)
 
