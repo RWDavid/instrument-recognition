@@ -20,7 +20,7 @@ sample_rate = audio.frame_rate
 samples = audio.get_array_of_samples()
 l_samples = samples[::2]
 r_samples = samples[1::2]
-fft_size = 16384
+fft_size = 8192
 
 # set up plot
 fig, ax = plt.subplots()
