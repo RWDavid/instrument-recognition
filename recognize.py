@@ -53,7 +53,11 @@ def main():
         data = np.bincount(a, data) / np.bincount(a)
 
         # normalize amplitudes to range [0, 1]
+<<<<<<< HEAD
         if max(data) != 0:
+=======
+        if (max(data) != 0):
+>>>>>>> cfb9c3f4a9471433211becb685b837519769fbb7
             data = data / max(data)
         nn.set_data(data[None])
 
