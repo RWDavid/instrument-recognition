@@ -66,7 +66,8 @@ while True:
     data = np.bincount(a, data) / np.bincount(a)
 
     # normalize amplitudes to range [0, 1]
-    data = data / max(data)
+    if max(data) != 0:
+        data = data / max(data)
     nn.set_data(data[None])
 
     # plot predictions
