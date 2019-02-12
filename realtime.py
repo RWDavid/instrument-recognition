@@ -24,10 +24,17 @@ fft_size = 4096
 
 # set up plot
 fig, ax = plt.subplots()
-data = np.arange(classes)
-data[0] = 100;
-line, = ax.plot(data)
-plt.pause(0.001)
+ind = np.arange(1, 4)
+plt.show(block = False)
+clarinet_bar, trumpet_bar, violin_bar = plt.bar(ind, (0, 0, 0))
+clarinet_bar.set_facecolor('r')
+trumpet_bar.set_facecolor('g')
+violin_bar.set_facecolor('b')
+ax.set_xticks(ind)
+ax.set_xticklabels(['Clarinet', 'Trumpet', 'Violin'])
+ax.set_ylim([0, 100])
+ax.set_ylabel('Confidence')
+ax.set_title('Real Time Predictions')
 
 # begin playback
 _play_with_simpleaudio(audio)
@@ -81,8 +88,13 @@ while True:
     else:
         print("violin")
         violin += 1
-    line.set_ydata(nn.predict() * 100)
-    fig.canvas.draw()
+
+    predictions = nn.predict() * 100
+    clarinet_bar.set_height(predictions[0])
+    trumpet_bar.set_height(predictions[1])
+    violin_bar.set_height(predictions[2])
+
+    fig.canvas.draw_idle()
     fig.canvas.flush_events()
 
 print("Clarinet: " + str(clarinet))
