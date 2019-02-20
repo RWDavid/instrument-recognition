@@ -3,29 +3,22 @@ import matplotlib.pyplot as plt
 from neuralnetwork import NeuralNetwork
 from preprocess import test_audio
 
-def test(file_path, nn):
-    data = test_audio(file_path)
-    data = [[float(x) for x in data.split()]]
-    temp1 = nn.data
-    temp2 = nn.labels
-    nn.set_data(np.array(data))
-    nn.set_labels(np.array([[0]]))
-    predict = nn.predict()
-    nn.set_data(temp1)
-    nn.set_labels(temp2)
-    return predict
-
-
-
-def main():
-    pass
-
 def train_and_plot(nn, iterations, alpha, reg, test_data, test_labels):
+
+    # set up plot
+    fig, ax = plt.subplots()
+    ind = np.arange(1, 4)
+    ax.set_xlabel('Epoch')
+    ax.set_ylabel('Cost')
+    ax.set_title('Model Performance: Lambda = 3')
+
     (train_plot, test_plot) = nn.train_with_plot(iterations, alpha, reg, test_data, test_labels)
     min_epoch = np.argmin(test_plot) + 1
     print("Test cost minimized at epoch " + str(min_epoch))
     epochs = np.arange(len(train_plot))
-    plt.plot(epochs, train_plot, epochs, test_plot)
+    plt.plot(epochs, train_plot, label = "Training")
+    plt.plot(epochs, test_plot, label = "Cross Validation")
+    plt.legend()
     plt.show()
 
 # load train data
@@ -69,6 +62,3 @@ test_labels = np.array(test_labels).reshape(len(test_labels), 1)
 nn = NeuralNetwork([50, 30, 3])
 nn.set_data(train_data)
 nn.set_labels(train_labels)
-
-if __name__ == '__main__':
-    main()
